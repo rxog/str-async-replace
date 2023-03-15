@@ -1,5 +1,6 @@
 declare class AsyncReplace {
-  constructor(str: string);
+  private inputString: string;
+  constructor(inputString: string);
 
   replace(
     searchValue: string | RegExp,
@@ -21,4 +22,4 @@ declare class AsyncReplace {
   toString(): string;
 }
 
-export default AsyncReplace;
+export = AsyncReplace;
