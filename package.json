@@ -1,0 +1,24 @@
+{
+  "name": "str-async-replace",
+  "version": "1.0.0",
+  "description": "An asynchronous string replacement library",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "async",
+    "replace",
+    "string",
+    "regular expression"
+  ],
+  "author": "Valdir Ronis",
+  "license": "MIT",
+  "devDependencies": {
+    "jest": "^29.5.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xogumon/str-async-replace.git"
+  }
+}
