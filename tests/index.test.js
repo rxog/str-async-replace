@@ -1,4 +1,4 @@
-const AsyncReplace = require("./index");
+const AsyncReplace = require("../dist");
 
 describe("AsyncReplace", () => {
   it("should throw an error when constructed with null or undefined str", () => {

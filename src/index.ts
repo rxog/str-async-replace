@@ -1,5 +1,3 @@
-"use strict";
-
 /**
  * A class that provides async string replacement methods
  */
@@ -9,7 +7,8 @@ class AsyncReplace {
    * @param {string} inputString - The input string to perform replacements on.
    * @throws {TypeError} - Throws an error if inputString is null, undefined, an empty string, or not a string.
    */
-  constructor(inputString) {
+  private inputString: string;
+  constructor(inputString: string) {
     if (inputString == null) {
       throw new TypeError("inputString must not be null or undefined");
     }
@@ -31,8 +30,15 @@ class AsyncReplace {
    * @throws {TypeError} - Throws an error if searchValue is null, undefined, not a string or regular expression, or if replaceLimit is not a positive integer greater than zero.
    * Throws an error if replaceValue is null, an empty string, not a string, function, object with a toString method, or an async function.
    */
-  async replace(searchValue, replaceValue, replaceLimit = 1) {
-    if (searchValue === null || searchValue === undefined) {
+  async replace(
+    searchValue: string | RegExp,
+    replaceValue:
+      | string
+      | ((...args: any[]) => Promise<string>)
+      | { toString: () => string },
+    replaceLimit: number = 1
+  ): Promise<AsyncReplace> {
+    if (searchValue == null) {
       throw new TypeError("searchValue must not be null or undefined");
     }
     if (typeof searchValue !== "string" && !(searchValue instanceof RegExp)) {
@@ -66,10 +72,10 @@ class AsyncReplace {
       replaceLimit = Number.MAX_SAFE_INTEGER;
     }
     const inputString = this.inputString;
-    let newStr = "";
-    let lastIndex = 0;
-    let currentReplacement = 0;
-    let regex;
+    let newStr: string = "";
+    let lastIndex: number = 0;
+    let currentReplacement: number = 0;
+    let regex: RegExp;
     try {
       regex =
         typeof searchValue === "string"
@@ -83,40 +89,37 @@ class AsyncReplace {
     } catch (e) {
       throw new TypeError("searchValue must be a valid regular expression");
     }
-    searchValue = regex.source;
-    let match;
+    let match: RegExpExecArray | null;
     while (
       (match = regex.exec(inputString)) !== null &&
       currentReplacement < replaceLimit
     ) {
       currentReplacement++;
-      let replacement;
-      if (typeof replaceValue === "string") {
-        replacement = replaceValue;
-      } else if (typeof replaceValue === "function") {
-        if (
-          match.length < 1 ||
-          typeof match[0] !== "string" ||
-          typeof match.index !== "number"
-        ) {
-          throw new TypeError(
-            "replacement function must take a string and a number as its first two parameters"
-          );
+      const response = async (replaceValue: any): Promise<any> => {
+        if (replaceValue instanceof Promise) {
+          return await replaceValue.then(response);
+        } else if (typeof replaceValue === "function") {
+          if (
+            match &&
+            (typeof match[0] === "string" || typeof match.index === "number")
+          ) {
+            return replaceValue(
+              match[0],
+              match.index,
+              ...match.slice(1),
+              inputString,
+              currentReplacement
+            );
+          }
+        } else if (typeof replaceValue.toString === "function") {
+          return replaceValue.toString();
+        } else {
+          return String(replaceValue);
         }
-        replacement = await replaceValue(
-          match[0],
-          match.index,
-          ...match.slice(1),
-          inputString,
-          currentReplacement
-        );
-      } else if (replaceValue instanceof Promise) {
-        replacement = await replaceValue;
-      } else if (typeof replaceValue.toString === "function") {
-        replacement = replaceValue.toString();
-      }
+      };
+      const replacement = await response(replaceValue);
       newStr += inputString.slice(lastIndex, match.index);
-      newStr += await replacement;
+      newStr += replacement;
       lastIndex = regex.lastIndex;
     }
     if (lastIndex < inputString.length) {
@@ -133,7 +136,13 @@ class AsyncReplace {
    * @throws {TypeError} - Throws an error if searchValue is null, undefined, not a string or regular expression.
    * Throws an error if replaceValue is null, an empty string, not a string, function, object with a toString method, or an async function.
    */
-  async replaceAll(searchValue, replaceValue) {
+  async replaceAll(
+    searchValue: string | RegExp,
+    replaceValue:
+      | string
+      | ((...args: any[]) => Promise<string>)
+      | { toString: () => string }
+  ): Promise<AsyncReplace> {
     return this.replace(searchValue, replaceValue, Number.MAX_SAFE_INTEGER);
   }
 
@@ -141,17 +150,9 @@ class AsyncReplace {
    * Returns the input string used to create the instance of AsyncReplace.
    * @returns {string} - The input string.
    */
-  toString() {
+  toString(): string {
     return this.inputString;
   }
 }
 
-// Exports the class as the default export in a Node.js environment
-if (typeof module !== "undefined" && typeof module.exports !== "undefined") {
-  module.exports = AsyncReplace;
-}
-
-// Exports the class as a global variable in a browser environment
-if (typeof window !== "undefined") {
-  window.AsyncReplace = AsyncReplace;
-}
+export = AsyncReplace;
