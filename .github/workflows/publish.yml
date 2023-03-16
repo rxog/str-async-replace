@@ -14,10 +14,10 @@ jobs:
         with:
           node-version: "16.x"
           registry-url: "https://registry.npmjs.org"
-      - name: Install
+      - name: Install, build and test
         run: npm ci
-      - name: Run test
-        run: npm test
+             npm run build
+             npm test
       - name: Publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}

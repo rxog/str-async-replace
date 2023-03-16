@@ -56,7 +56,6 @@ The `AsyncReplace` class throws `TypeError` for the following cases:
 - `replaceLimit` is not a positive integer greater than zero.
 - `replaceValue` is null, undefined, an empty string, or not a string, object with a `toString` method, or an async function.
 - `searchValue` is not a valid regular expression.
-- `replaceValue` is a function and its first two parameters are not a string and a number.
 
 ## Notes
 
