@@ -1,6 +1,6 @@
 {
   "name": "str-async-replace",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "An asynchronous string replacement library",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
