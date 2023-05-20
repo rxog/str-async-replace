@@ -48,6 +48,19 @@ declare class AsyncReplace {
         };
     }[]): Promise<AsyncReplace>;
     /**
+     * Asynchronously, replaces multiple substrings or regular expressions in the string with their corresponding replacements.
+     * @async
+     * @param {...{search: string|RegExp, replace: string|((substring: string, ...args: any[]) => string)|AsyncFunction|Promise}} replacements - An array of objects containing the search string or regular expression, and its corresponding replacement string or function to be executed.
+     * @returns {Promise<AsyncReplace>} - A new AsyncReplace instance with the replacements made.
+     * @throws {TypeError} - If the replacements parameter is not an array of objects or if any search or replace values are undefined or null.
+     */
+    replaceAllMany(replacements: {
+        search: string | RegExp;
+        replace: string | ((...args: any[]) => Promise<string>) | {
+            toString: () => string;
+        };
+    }[]): Promise<AsyncReplace>;
+    /**
      * Returns the input string used to create the instance of AsyncReplace.
      * @returns {string} - The input string.
      */

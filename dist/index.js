@@ -147,6 +147,28 @@ class AsyncReplace {
         });
     }
     /**
+     * Asynchronously, replaces multiple substrings or regular expressions in the string with their corresponding replacements.
+     * @async
+     * @param {...{search: string|RegExp, replace: string|((substring: string, ...args: any[]) => string)|AsyncFunction|Promise}} replacements - An array of objects containing the search string or regular expression, and its corresponding replacement string or function to be executed.
+     * @returns {Promise<AsyncReplace>} - A new AsyncReplace instance with the replacements made.
+     * @throws {TypeError} - If the replacements parameter is not an array of objects or if any search or replace values are undefined or null.
+     */
+    replaceAllMany(replacements) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!Array.isArray(replacements)) {
+                throw new TypeError("The replacements parameter must be an array of objects.");
+            }
+            let newString = new AsyncReplace(this.inputString);
+            for (const { search, replace } of replacements) {
+                if (!search || !replace) {
+                    throw new TypeError("The search and replace values cannot be undefined or null.");
+                }
+                newString = yield newString.replaceAll(search, replace);
+            }
+            return newString;
+        });
+    }
+    /**
      * Returns the input string used to create the instance of AsyncReplace.
      * @returns {string} - The input string.
      */
