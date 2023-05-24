@@ -20,11 +20,11 @@ yarn add str-async-replace
 Alternatively, you can include it in your project using a CDN:
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/str-async-replace@1.1.0/dist/index.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/str-async-replace@1.1.1/dist/index.min.js"></script>
 ```
 
 ```html
-<script src="https://unpkg.com/str-async-replace@1.1.0/dist/index.min.js"></script>
+<script src="https://unpkg.com/str-async-replace@1.1.1/dist/index.min.js"></script>
 ```
 
 ## Usage
