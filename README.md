@@ -1,151 +1,181 @@
 [npm]: https://img.shields.io/npm/v/str-async-replace
 [npm-url]: https://www.npmjs.com/package/str-async-replace
-[size]: https://packagephobia.now.sh/badge?p=str-async-replace
-[size-url]: https://packagephobia.now.sh/result?p=str-async-replace
 
-# str-async-replace: AsyncReplace📚 [![npm][npm]][npm-url] [![size][size]][size-url]
+# str-async-replace: AsyncReplace📚 [![npm][npm]][npm-url]
 
-The `AsyncReplace` class provides methods to replace substrings within a string asynchronously, using regular expressions or plain strings.
+The `AsyncReplace` class provides asynchronous string replacement methods. It allows you to perform string replacements with flexibility, including support for regular expressions and asynchronous replacement functions.
 
-## Installation
+## Table of Contents
 
-This package can be used in both Node.js and browser environments. You can install it using npm or yarn:
+- [Constructor](#constructor)
+- [Method: replace](#method-replace)
+- [Method: replaceAll](#method-replaceall)
+- [Method: replaceMany](#method-replacemany)
+- [Method: replaceAllMany](#method-replaceallmany)
+- [Method: toString](#method-tostring)
 
-```bash
-npm install str-async-replace
-# or
-yarn add str-async-replace
-```
+## Constructor
 
-Alternatively, you can include it in your project using a CDN:
+### `AsyncReplace(inputString: string)`
 
-```html
-<script src="https://cdn.jsdelivr.net/npm/str-async-replace@1.1.1/dist/index.min.js"></script>
-```
+- Creates an instance of `AsyncReplace`.
+- Parameters:
+  - `inputString` (string): The input string to perform replacements on.
+- Throws a `TypeError` if `inputString` is null, undefined, an empty string, or not a string.
 
-```html
-<script src="https://unpkg.com/str-async-replace@1.1.1/dist/index.min.js"></script>
-```
+## Method: replace
 
-## Usage
+### `async replace(searchValue: string | RegExp, replaceValue: string | ((substring: string, ...args: any[]) => Promise<string> | string), replaceLimit: number = 1): Promise<AsyncReplace>`
 
-To use `AsyncReplace`, you must first create an instance of the class by passing in the string you want to perform replacements on:
+- Asynchronously replaces one or more occurrences of the `searchValue` in the input string with the specified `replaceValue`.
+- Parameters:
+  - `searchValue` (string | RegExp): The value to search for in the input string. Can be a string or regular expression.
+  - `replaceValue` (string | ((substring: string, ...args: any[]) => Promise&lt;string&gt; | string)): The value to replace the search value with. Can be a string, function, object with a `toString` method, or an async function.
+  - `replaceLimit` (number, optional): The maximum number of replacements to make. Must be a positive integer greater than zero. Defaults to 1.
+- Returns a `Promise<AsyncReplace>`: A new `AsyncReplace` instance with the replacements made.
+- Throws a `TypeError` if:
+  - `searchValue` is null, undefined, not a string, or not a regular expression.
+  - `replaceLimit` is not a positive integer greater than zero.
+  - `replaceValue` is null, an empty string, not a string, not a function, not an object with a `toString` method, or not an async function.
 
-```js
-const AsyncReplace = require("str-async-replace");
-
-const inputString = "Hello, world!";
-const replacer = new AsyncReplace(inputString);
-```
-
-Once you have an instance of AsyncReplace, you can call its various methods to perform replacements on the string.
-
-### `replace(searchValue, replaceValue[, replaceLimit])`
-
-This method asynchronously replaces one or more occurrences of the `searchValue` in the input string with the specified `replaceValue`.
+#### Example: Simulating Delay in Replace
 
 ```js
-const result = await replacer.replace("world", "John");
-console.log(result.toString()); // Output: Hello, John!
+const inputText = "Hello, World!";
+const asyncReplacer = new AsyncReplace(inputText);
+
+(async () => {
+  try {
+    const newString = await asyncReplacer.replace("World", async () => {
+      // Simulate a delay, e.g., an asynchronous HTTP request.
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      return "Response from the server";
+    });
+
+    console.log(newString.toString()); // Output after 2 seconds: "Hello, Response from the server!"
+  } catch (error) {
+    console.error(error);
+  }
+})();
 ```
 
-If you want to limit the number of replacements made, you can pass in a `replaceLimit` parameter:
+## Method: replaceAll
+
+### `async replaceAll(searchValue: string | RegExp, replaceValue: string | ((substring: string, ...args: any[]) => Promise<string> | string)): Promise<AsyncReplace>`
+
+- Asynchronously replaces all instances of the `searchValue` in the input string with the `replaceValue` provided.
+- Parameters:
+  - `searchValue` (string | RegExp): The value to search for in the input string. Can be a string or regular expression.
+  - `replaceValue` (string | ((substring: string, ...args: any[]) => Promise&lt;string&gt; | string)): The value to replace the search value with. Can be a string, function, object with a `toString` method, or an async function.
+- Returns a `Promise<AsyncReplace>`: A new `AsyncReplace` instance with the replacements made.
+- Throws a `TypeError` if:
+  - `searchValue` is null, undefined, not a string, or not a regular expression.
+  - `replaceValue` is null, an empty string, not a string, not a function, not an object with a `toString` method, or not an async function.
+
+#### Example: Simulating Delay in ReplaceAll
 
 ```js
-const result = await replacer.replace("o", "x", 2);
-console.log(result.toString()); // Output: Hellx, wxrld!
+const inputText = "Hello, World!";
+const asyncReplacer = new AsyncReplace(inputText);
+
+(async () => {
+  try {
+    const newString = await asyncReplacer.replaceAll("World", async () => {
+      // Simulate a delay, e.g., an asynchronous HTTP request.
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      return "Response from the server";
+    });
+
+    console.log(newString.toString()); // Output after 2 seconds: "Hello, Response from the server!"
+  } catch (error) {
+    console.error(error);
+  }
+})();
 ```
 
-### `replaceAll(searchValue, replaceValue)`
+## Method: replaceMany
 
-This method asynchronously replaces all instances of the `searchValue` in the input string with the `replaceValue` provided.
+### `async replaceMany(replacements: { search: string | RegExp, replace: string | ((substring: string, ...args: any[]) => Promise<string> | string) }[]): Promise<AsyncReplace>`
+
+- Asynchronously replaces multiple substrings or regular expressions in the string with their corresponding replacements.
+- Parameters:
+  - `replacements` (array of objects): An array of objects containing the search string or regular expression, and its corresponding replacement string or function to be executed.
+- Returns a `Promise<AsyncReplace>`: A new `AsyncReplace` instance with the replacements made.
+- Throws a `TypeError` if:
+  - `replacements` parameter is not an array of objects.
+  - Any search or replace values are undefined or null.
+
+#### Example: Simulating Delay in ReplaceMany
 
 ```js
-const result = await replacer.replaceAll("l", "L");
-console.log(result.toString()); // Output: HeLLo, worLd!
+const inputText = "The quick brown fox jumps over the lazy dog.";
+const asyncReplacer = new AsyncReplace(inputText);
+
+(async () => {
+  try {
+    const replacements = [
+      { search: "quick", replace: async () => {
+        // Simulate a delay, e.g., an asynchronous database query.
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        return "fast";
+      }},
+      { search: /brown/, replace: "red" },
+      { search: "fox", replace: "rabbit" },
+    ];
+
+    const newString = await asyncReplacer.replaceMany(replacements);
+    console.log(newString.toString()); // Output after 2 seconds: "The fast red rabbit jumps over the lazy dog."
+  } catch (error) {
+    console.error(error);
+  }
+})();
 ```
 
-### `replaceMany(replacements)`
+## Method: replaceAllMany
 
-This method asynchronously replaces multiple substrings or regular expressions in the string with their corresponding replacements.
+### `async replaceAllMany(replacements: { search: string | RegExp, replace: string | ((substring: string, ...args: any[]) => Promise<string> | string) }[]): Promise<AsyncReplace>`
+
+- Asynchronously replaces multiple substrings or regular expressions in the string with their corresponding replacements using the `replaceAll` method.
+- Parameters:
+  - `replacements` (array of objects): An array of objects containing the search string or regular expression, and its corresponding replacement string or function to be executed.
+- Returns a `Promise<AsyncReplace>`: A new `AsyncReplace` instance with the replacements made.
+- Throws a `TypeError` if:
+  - `replacements` parameter is not an array of objects.
+  - Any search or replace values are undefined or null.
+
+#### Example: Simulating Delay in ReplaceAllMany
 
 ```js
-const result = await replacer.replaceMany([
-  { search: "Hello", replace: "Hi" },
-  { search: /[A-Z]/g, replace: (match) => match.toLowerCase() },
-]);
-console.log(result.toString()); // Output: hi, world!
+const inputText = "The quick brown fox jumps over the lazy dog.";
+const asyncReplacer = new AsyncReplace(inputText);
+
+(async () => {
+  try {
+    const replacements = [
+      { search: "quick", replace: async () => {
+        // Simulate a delay, e.g., an asynchronous database query.
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        return "fast";
+      }},
+      { search: /brown/, replace: "red" },
+      { search: "fox", replace: "rabbit" },
+    ];
+
+    const newString = await asyncReplacer.replaceAllMany(replacements);
+    console.log(newString.toString()); // Output after 2 seconds: "The fast red rabbit jumps over the lazy dog."
+  } catch (error) {
+    console.error(error);
+  }
+})();
 ```
 
-### `toString()`
+## Method: toString
 
-This method returns the input string used to create the instance of AsyncReplace.
+### `toString(): string`
 
-```js
-console.log(replacer.toString()); // Output: Hello, world!
-```
+- Returns the input string used to create the instance of `AsyncReplace`.
+- Returns a `string`: The input string.
 
 ---
 
-Here's an example that demonstrates how to use multiple methods of the AsyncReplace class at once:
-
-```js
-const AsyncReplace = require("str-async-replace");
-
-const inputString = "Hello, world! This is a test string.";
-
-// Create an instance of AsyncReplace with the input string
-const asyncReplace = new AsyncReplace(inputString);
-
-// Replace all occurrences of "l" with "L" and limit the replacements to 2
-asyncReplace
-  .replace("l", "L", 2)
-  .then((result) => {
-    console.log(result.toString()); // Output: HeLLo, world! This is a test string.
-    return result;
-  })
-  // Replace all occurrences of "o" with "O" and "t" with "T" using replaceMany
-  .then((result) => {
-    return result.replaceMany([
-      { search: /o/g, replace: "O" },
-      { search: /t/g, replace: "T" },
-    ]);
-  })
-  .then((result) => {
-    console.log(result.toString()); // Output: HeLLO, wOrld! This is a TesT sTring.
-    return result;
-  })
-  // Replace all occurrences of "e" with "E" using replaceAll
-  .then((result) => {
-    return result.replaceAll("e", "E");
-  })
-  .then((result) => {
-    console.log(result.toString()); // Output: HELL0, wOrld! This is a TEsT sTring.
-    return result;
-  })
-  .catch((err) => {
-    console.error(err);
-  });
-```
-
-This example first creates an instance of AsyncReplace with an input string, then replaces the first two occurrences of "l" with "L" using the replace method with a limit of 2. It then uses the replaceMany method to replace all occurrences of "o" with "O" and "t" with "T". Next, it uses the replaceAll method to replace all occurrences of "e" with "E". Finally, it outputs the resulting string to the console.
-
-## Notes
-
-`AsyncReplace` instances are immutable. Each method call returns a new instance with the replaced string.
-
-## Error Handling
-
-If any errors occur during the replacement process, AsyncReplace will throw a TypeError with a descriptive message. Make sure to wrap your method calls in a try-catch block to handle any potential errors:
-
-```js
-try {
-  const result = await replacer.replace(null, "newString");
-} catch (error) {
-  console.error(error.message); // Output: searchValue must not be null or undefined
-}
-```
-
-## License
-
-This package is licensed under the [MIT License](LICENSE).
+This documentation provides an overview of the `AsyncReplace` class and its methods, including their descriptions, parameters, return types, potential exceptions and examples that simulate delays for illustrative purposes. Use this documentation as a reference when working with the `AsyncReplace` class.

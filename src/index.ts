@@ -9,14 +9,8 @@ class AsyncReplace {
    */
   private inputString: string;
   constructor(inputString: string) {
-    if (inputString == null) {
-      throw new TypeError("inputString must not be null or undefined");
-    }
-    if (typeof inputString !== "string") {
-      throw new TypeError("inputString must be a string");
-    }
-    if (inputString === "") {
-      throw new TypeError("inputString cannot be an empty string");
+    if (!inputString) {
+      throw new TypeError("inputString must not be empty or undefined");
     }
     this.inputString = inputString;
   }
@@ -82,11 +76,11 @@ class AsyncReplace {
         typeof searchValue === "string"
           ? new RegExp(searchValue.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "g")
           : new RegExp(
-              searchValue.source,
-              searchValue.flags !== null && searchValue.flags.includes("g")
-                ? searchValue.flags
-                : `${searchValue.flags || ""}g`
-            );
+            searchValue.source,
+            searchValue.flags !== null && searchValue.flags.includes("g")
+              ? searchValue.flags
+              : `${searchValue.flags || ""}g`
+          );
     } catch (e) {
       throw new TypeError("searchValue must be a valid regular expression");
     }
@@ -159,9 +153,9 @@ class AsyncReplace {
     replacements: {
       search: string | RegExp;
       replace:
-        | string
-        | ((...args: any[]) => Promise<string>)
-        | { toString: () => string };
+      | string
+      | ((...args: any[]) => Promise<string>)
+      | { toString: () => string };
     }[]
   ): Promise<AsyncReplace> {
     if (!Array.isArray(replacements)) {
@@ -195,9 +189,9 @@ class AsyncReplace {
     replacements: {
       search: string | RegExp;
       replace:
-        | string
-        | ((...args: any[]) => Promise<string>)
-        | { toString: () => string };
+      | string
+      | ((...args: any[]) => Promise<string>)
+      | { toString: () => string };
     }[]
   ): Promise<AsyncReplace> {
     if (!Array.isArray(replacements)) {
